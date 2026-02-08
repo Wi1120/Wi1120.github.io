@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>肾功能复查报告 - 黄威</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a5f7a;
+            --primary-light: #2e8bc0;
+            --success: #2d6a4f;
+            --warning: #b35900;
+            --danger: #c0392b;
+            --bg: #f8fafb;
+            --card-bg: #ffffff;
+            --text-primary: #1a1a2e;
+            --text-secondary: #5a5a6e;
+            --border: #e1e8ed;
+            --shadow: 0 2px 8px rgba(26, 95, 122, 0.08);
+            --shadow-hover: 0 8px 24px rgba(26, 95, 122, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* 页面容器 */
+        .page {
+            display: none;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 头部 */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 32px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-hover);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .header-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+
+        .hospital-badge {
+            background: rgba(255,255,255,0.15);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            backdrop-filter: blur(4px);
+        }
+
+        .patient-info {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-label {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* 导航 */
+        .nav-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            background: var(--card-bg);
+            padding: 8px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 14px 24px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+
+        .nav-tab:hover {
+            background: var(--bg);
+            color: var(--primary);
+        }
+
+        .nav-tab.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(26, 95, 122, 0.3);
+        }
+
+        /* 卡片 */
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--bg);
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .card-icon.blue { background: #e3f2fd; }
+        .card-icon.green { background: #e8f5e9; }
+        .card-icon.orange { background: #fff3e0; }
+        .card-icon.purple { background: #f3e5f5; }
+        .card-icon.red { background: #ffebee; }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* 表格 */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            background: var(--bg);
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .data-table tr:hover {
+            background: var(--bg);
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* 状态标签 */
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .status::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .status.success {
+            background: #e8f5e9;
+            color: var(--success);
+        }
+
+        .status.success::before {
+            background: var(--success);
+        }
+
+        .status.warning {
+            background: #fff3e0;
+            color: var(--warning);
+        }
+
+        .status.warning::before {
+            background: var(--warning);
+        }
+
+        .status.danger {
+            background: #ffebee;
+            color: var(--danger);
+        }
+
+        .status.danger::before {
+            background: var(--danger);
+        }
+
+        /* 数值高亮 */
+        .value-highlight {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .value-normal {
+            color: var(--success);
+        }
+
+        .value-warning {
+            color: var(--warning);
+        }
+
+        .value-danger {
+            color: var(--danger);
+        }
+
+        /* 结论页样式 */
+        .conclusion-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .conclusion-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--primary);
+        }
+
+        .conclusion-card.success {
+            border-left-color: var(--success);
+        }
+
+        .conclusion-card.warning {
+            border-left-color: var(--warning);
+        }
+
+        .conclusion-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .conclusion-content {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .conclusion-highlight {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* 总结卡片 */
+        .summary-card {
+            background: linear-gradient(135deg, var(--success) 0%, #40916c 100%);
+            color: white;
+            padding: 28px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+
+        .summary-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .summary-text {
+            font-size: 15px;
+            line-height: 1.8;
+            opacity: 0.95;
+        }
+
+        .summary-highlight {
+            background: rgba(255,255,255,0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        /* 建议列表 */
+        .suggestion-list {
+            list-style: none;
+        }
+
+        .suggestion-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 14px;
+        }
+
+        .suggestion-list li:last-child {
+            border-bottom: none;
+        }
+
+        .suggestion-num {
+            width: 24px;
+            height: 24px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        /* 打印按钮 */
+        .print-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px 28px;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(26, 95, 122, 0.4);
+            transition: all 0.3s ease;
+            font-family: 'Noto Sans SC', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .print-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(26, 95, 122, 0.5);
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .patient-info {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .header-title {
+                font-size: 22px;
+            }
+
+            .data-table {
+                font-size: 13px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 12px 8px;
+            }
+        }
+
+        @media print {
+            .nav-tabs,
+            .print-btn {
+                display: none !important;
+            }
+
+            .page {
+                display: block !important;
+                page-break-after: always;
+            }
+
+            .page:last-child {
+                page-break-after: avoid;
+            }
+
+            body {
+                background: white;
+            }
+
+            .card,
+            .conclusion-card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航 -->
+    <div style="max-width: 900px; margin: 0 auto; padding: 20px 20px 0;">
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showPage(1)">📋 详细指标</button>
+            <button class="nav-tab" onclick="showPage(2)">✓ 结论判断</button>
+        </div>
+    </div>
+
+    <!-- 第一页：详细指标 -->
+    <div class="page active" id="page1">
+        <!-- 头部信息 -->
+        <div class="header">
+            <div class="header-top">
+                <div>
+                    <div class="header-title">肾功能复查报告</div>
+                    <div class="header-subtitle">Renal Function Re-examination Report</div>
+                </div>
+                <div class="hospital-badge">🏥 浏阳市人民医院</div>
+            </div>
+            <div class="patient-info">
+                <div class="info-item">
+                    <div class="info-label">姓名</div>
+                    <div class="info-value">黄威</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">性别/年龄</div>
+                    <div class="info-value">男 / 23岁</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">检查日期</div>
+                    <div class="info-value">2026-02-08</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">门诊号</div>
+                    <div class="info-value">430181200210035712</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 肾功能 -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon blue">🩸</div>
+                <div class="card-title">肾功能检查（血液）</div>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>检测指标</th>
+                        <th>结果</th>
+                        <th>参考值</th>
+                        <th>状态</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>肌酐 (Cr)</td>
+                        <td><span class="value-highlight value-warning">112.3 μmol/L</span></td>
+                        <td>57-97 μmol/L</td>
+                        <td><span class="status warning">偏高</span></td>
+                    </tr>
+                    <tr>
+                        <td>尿素 (Urea)</td>
+                        <td><span class="value-highlight value-normal">3.34 mmol/L</span></td>
+                        <td>3.1-8.0 mmol/L</td>
+                        <td><span class="status success">正常</span></td>
+                    </tr>
+                    <tr>
+                        <td>尿酸 (UA)</td>
+                        <td><span class="value-highlight value-normal">378 μmol/L</span></td>
+                        <td>208-428 μmol/L</td>
+                        <td><span class="status success">正常</span></td>
+                    </tr>
+                    <tr style="background: #f0f7ff;">
+                        <td><strong>胱抑素C (Cys-C)</strong></td>
+                        <td><span class="value-highlight value-normal"><strong>0.97 mg/L</strong></span></td>
+                        <td>0.59-1.03 mg/L</td>
+                        <td><span class="status success"><strong>正常</strong></span></td>
+                    </tr>
+                    <tr>
+                        <td>β2微球蛋白</td>
+                        <td><span class="value-highlight value-normal">1.34 mg/L</span></td>
+                        <td>1.0-3.0 mg/L</td>
+                        <td><span class="status success">正常</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 电解质 -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon purple">⚡</div>
+                <div class="card-title">电解质检查</div>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>检测指标</th>
+                        <th>结果</th>
+                        <th>参考值</th>
+                        <th>状态</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>钾 (K)</td>
+                        <td><span class="value-highlight value-normal">3.99 mmol/L</span></td>
+                        <td>3.5-5.3 mmol/L</td>
+                        <td><span class="status success">正常</span></td>
+                    </tr>
+                    <tr>
+                        <td>钠 (Na)</td>
+                        <td><span class="value-highlight value-normal">141.3 mmol/L</span></td>
+                        <td>137-147 mmol/L</td>
+                        <td><span class="status success">正常</span></td>
+                    </tr>
+                    <tr>
+                        <td>氯 (Cl)</td>
+                        <td><span class="value-highlight value-normal">100.8 mmol/L</span></td>
+                        <td>99-110 mmol/L</td>
+                        <td><span class="status success">正常</span></td>
+                    </tr>
+                    <tr>
+                        <td>钙 (Ca)</td>
+                        <td><span class="value-highlight value-normal">2.33 mmol/L</span></td>
+                        <td>2.11-2.52 mmol/L</td>
+                        <td><span class="status success">正常</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 尿常规 -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon green">🧪</div>
+                <div class="card-title">尿常规检查</div>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>检测指标</th>
+                        <th>结果</th>
+                        <th>参考值</th>
+                        <th>状态</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>尿蛋白</td>
+                        <td><span class="value-highlight value-normal">阴性 (-)</span></td>
+                        <td>阴性</td>
+                        <td><span class="status success">正常</span></td>
+                    </tr>
+                    <tr>
+                        <td>尿潜血</td>
+                        <td><span class="value-highlight value-normal">阴性 (-)</span></td>
+                        <td>阴性</td>
+                        <td><span class="status success">正常</span></td>
+                    </tr>
+                    <tr>
+                        <td>尿糖</td>
+                        <td><span class="value-highlight value-normal">阴性 (-)</span></td>
+                        <td>阴性</td>
+                        <td><span class="status success">正常</span></td>
+                    </tr>
+                    <tr>
+                        <td>尿白细胞</td>
+                        <td><span class="value-highlight value-normal">阴性 (-)</span></td>
+                        <td>0-3/HP</td>
+                        <td><span class="status success">正常</span></td>
+                    </tr>
+                    <tr>
+                        <td>尿红细胞</td>
+                        <td><span class="value-highlight value-normal">阴性 (-)</span></td>
+                        <td>0-偶见/HP</td>
+                        <td><span class="status success">正常</span></td>
+                    </tr>
+                    <tr>
+                        <td>尿比重</td>
+                        <td><span class="value-highlight value-normal">1.005</span></td>
+                        <td>1.003-1.030</td>
+                        <td><span class="status success">正常</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ACR -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon blue">📊</div>
+                <div class="card-title">尿微量白蛋白/肌酐比值 (ACR)</div>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>检测指标</th>
+                        <th>结果</th>
+                        <th>参考值</th>
+                        <th>状态</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>尿微量白蛋白</td>
+                        <td><span class="value-highlight value-normal">4.2 mg/L</span></td>
+                        <td>0-30 mg/L</td>
+                        <td><span class="status success">正常</span></td>
+                    </tr>
+                    <tr>
+                        <td>尿肌酐</td>
+                        <td><span class="value-highlight">17836 μmol/L</span></td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr style="background: #f0f7ff;">
+                        <td><strong>ACR 比值</strong></td>
+                        <td><span class="value-highlight value-normal"><strong>2.08 mg/g</strong></span></td>
+                        <td>&lt;30 mg/g</td>
+                        <td><span class="status success"><strong>正常</strong></span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 彩超 -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon orange">📡</div>
+                <div class="card-title">彩超检查（双肾输尿管膀胱前列腺）</div>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>检查部位</th>
+                        <th>结果</th>
+                        <th>状态</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>左肾</td>
+                        <td>96×51mm，形态规则，表面光滑，实质回声正常，集合系统无分离</td>
+                        <td><span class="status success">正常</span></td>
+                    </tr>
+                    <tr>
+                        <td>右肾</td>
+                        <td>95×38mm，形态规则，表面光滑，实质回声正常，集合系统无分离</td>
+                        <td><span class="status success">正常</span></td>
+                    </tr>
+                    <tr>
+                        <td>双肾血流 (CDFI)</td>
+                        <td>血流分布正常</td>
+                        <td><span class="status success">正常</span></td>
+                    </tr>
+                    <tr>
+                        <td>双侧输尿管</td>
+                        <td>不扩张，无梗阻</td>
+                        <td><span class="status success">正常</span></td>
+                    </tr>
+                    <tr>
+                        <td>膀胱</td>
+                        <td>充盈欠佳，未见结石</td>
+                        <td><span class="status warning">憋尿不足</span></td>
+                    </tr>
+                    <tr>
+                        <td>前列腺</td>
+                        <td>42×34×32mm，形态饱满，回声不均匀（轻度增大）</td>
+                        <td><span class="status warning">轻度增大</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 第二页：结论判断 -->
+    <div class="page" id="page2">
+        <!-- 头部 -->
+        <div class="header">
+            <div class="header-top">
+                <div>
+                    <div class="header-title">综合结论</div>
+                    <div class="header-subtitle">Comprehensive Assessment</div>
+                </div>
+                <div class="hospital-badge">✓ 复查完成</div>
+            </div>
+            <div class="patient-info">
+                <div class="info-item">
+                    <div class="info-label">姓名</div>
+                    <div class="info-value">黄威</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">性别/年龄</div>
+                    <div class="info-value">男 / 23岁</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">检查日期</div>
+                    <div class="info-value">2026-02-08</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">检查医院</div>
+                    <div class="info-value">浏阳市人民医院</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 总结 -->
+        <div class="summary-card">
+            <div class="summary-title">
+                <span>✓</span>
+                综合判断：生理性肌酐升高，肾功能无明确损伤
+            </div>
+            <div class="summary-text">
+                患者肌酐轻度升高（<span class="summary-highlight">112.3 μmol/L</span>），但
+                <span class="summary-highlight">胱抑素C正常（0.97）</span>、
+                <span class="summary-highlight">ACR正常（2.08 mg/g）</span>、
+                尿蛋白阴性、双肾彩超正常。
+                <br><br>
+                综合判断为<span class="summary-highlight">生理性肌酐升高</span>，与长期健身、肌肉量较大相关，
+                <span class="summary-highlight">非病理性肾功能损伤</span>。
+            </div>
+        </div>
+
+        <!-- 关键指标分析 -->
+        <div class="conclusion-grid">
+            <div class="conclusion-card success">
+                <div class="conclusion-title">
+                    <span>✓</span> 胱抑素C正常
+                </div>
+                <div class="conclusion-content">
+                    结果 <span class="conclusion-highlight">0.97 mg/L</span>（参考值 0.59-1.03）<br>
+                    胱抑素C不受肌肉量、饮食、运动影响，是反映肾小球滤过功能的<span class="conclusion-highlight">金标准</span>。
+                    正常说明真实肾功能良好。
+                </div>
+            </div>
+
+            <div class="conclusion-card success">
+                <div class="conclusion-title">
+                    <span>✓</span> ACR正常（尿微量白蛋白/肌酐比值）
+                </div>
+                <div class="conclusion-content">
+                    结果 <span class="conclusion-highlight">2.08 mg/g</span>（参考值 &lt;30）<br>
+                    ACR是早期肾损伤的敏感指标。2.08 远低于 30 的警戒线，
+                    <span class="conclusion-highlight">无早期肾损伤证据</span>。
+                </div>
+            </div>
+
+            <div class="conclusion-card success">
+                <div class="conclusion-title">
+                    <span>✓</span> 尿蛋白阴性
+                </div>
+                <div class="conclusion-content">
+                    尿常规检查尿蛋白阴性，<span class="conclusion-highlight">无蛋白尿</span>，
+                    说明肾小球滤过屏障功能正常，无肾脏漏蛋白现象。
+                </div>
+            </div>
+
+            <div class="conclusion-card success">
+                <div class="conclusion-title">
+                    <span>✓</span> 双肾彩超正常
+                </div>
+                <div class="conclusion-content">
+                    双肾大小正常、形态规则、无结石、无积水、血流正常。
+                    <span class="conclusion-highlight">无结构性病变</span>。
+                </div>
+            </div>
+
+            <div class="conclusion-card success">
+                <div class="conclusion-title">
+                    <span>✓</span> 电解质正常
+                </div>
+                <div class="conclusion-content">
+                    钾、钠、氯、钙均在正常范围，<span class="conclusion-highlight">无电解质代谢紊乱</span>，
+                    肾脏调节功能正常。
+                </div>
+            </div>
+
+            <div class="conclusion-card warning">
+                <div class="conclusion-title">
+                    <span>!</span> 肌酐单项偏高（生理性）
+                </div>
+                <div class="conclusion-content">
+                    肌酐 <span class="conclusion-highlight">112.3 μmol/L</span>（参考值 57-97）<br>
+                    可能原因：长期力量训练、肌肉量较大、高蛋白饮食史。
+                    肌酐受肌肉代谢影响大，单独升高而胱抑素C正常时，
+                    <span class="conclusion-highlight">多为生理性升高</span>。
+                </div>
+            </div>
+
+            <div class="conclusion-card warning">
+                <div class="conclusion-title">
+                    <span>!</span> 前列腺轻度增大（新发现）
+                </div>
+                <div class="conclusion-content">
+                    前列腺 42×34×32mm，形态饱满，回声不均匀。<br>
+                    23岁轻度增大不常见，可能与慢性前列腺炎或检查前憋尿/充血有关。
+                    建议<span class="conclusion-highlight">泌尿外科</span>进一步检查（非肾内科问题）。
+                </div>
+            </div>
+        </div>
+
+        <!-- 建议 -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon green">💡</div>
+                <div class="card-title">医生建议</div>
+            </div>
+            <ol class="suggestion-list">
+                <li>
+                    <span class="suggestion-num">1</span>
+                    <div>
+                        <strong>综合判断为生理性肌酐升高</strong>，与长期健身、肌肉量较大相关，肾功能无明确损伤。
+                    </div>
+                </li>
+                <li>
+                    <span class="suggestion-num">2</span>
+                    <div>
+                        <strong>目前无需特殊治疗</strong>，建议定期复查肾功能（3-6个月）。
+                    </div>
+                </li>
+                <li>
+                    <span class="suggestion-num">3</span>
+                    <div>
+                        <strong>前列腺轻度增大</strong>建议泌尿外科进一步检查，排除慢性前列腺炎。
+                    </div>
+                </li>
+                <li>
+                    <span class="suggestion-num">4</span>
+                    <div>
+                        保持清淡饮食，避免高蛋白饮食过量，适量运动，规律作息。
+                    </div>
+                </li>
+            </ol>
+        </div>
+
+        <!-- 诊断证明建议 -->
+        <div class="card" style="background: #f8f9fa; border: 2px dashed var(--primary);">
+            <div class="card-header">
+                <div class="card-icon blue">📝</div>
+                <div class="card-title">诊断证明建议内容</div>
+            </div>
+            <div style="background: white; padding: 20px; border-radius: 8px; font-size: 14px; line-height: 1.8; color: var(--text-primary);">
+                "患者肌酐轻度升高（112.3 μmol/L），结合胱抑素C（0.97 mg/L，正常）、ACR（2.08 mg/g，正常）、尿常规及肾脏彩超结果，<strong>考虑与长期健身、肌肉量较大相关，肾功能无明确损伤</strong>。建议定期复查，目前无需特殊治疗。"
+            </div>
+        </div>
+    </div>
+
+    <!-- 打印按钮 -->
+    <button class="print-btn" onclick="window.print()">
+        <span>🖨️</span> 打印报告
+    </button>
+
+    <script>
+        function showPage(pageNum) {
+            // 隐藏所有页面
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+
+            // 显示目标页面
+            document.getElementById('page' + pageNum).classList.add('active');
+
+            // 更新导航状态
+            document.querySelectorAll('.nav-tab').forEach((tab, index) => {
+                tab.classList.toggle('active', index === pageNum - 1);
+            });
+
+            // 滚动到顶部
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
